@@ -1,0 +1,482 @@
+{
+ "v3_belt_target@2.5": {
+  "h_mm": 2.5,
+  "dofs": 152439,
+  "solid_elements": 8282,
+  "volume_cm3": 129.40625,
+  "envelope_eig_Nmm": [
+   0.5070281390293918,
+   1.9768204699908511,
+   2.211948977656284
+  ],
+  "worst_case_compliance_Nmm": 2.211948977656284,
+  "worst_direction": [
+   -1.0,
+   -3.1365532755672535e-12,
+   -1.1057970621226387e-13
+  ],
+  "seat_deflection_um": {
+   "vertical 80 N": 8.57756049307856,
+   "horizontal 80 N": 27.649362220703562,
+   "axial 30 N": 65.29886746513192,
+   "worst-case envelope": 27.649362220703548
+  },
+  "tilt_sweep": [
+   [
+    -90,
+    27.649362220703562
+   ],
+   [
+    -75,
+    26.799344340259065
+   ],
+   [
+    -60,
+    24.326098318715356
+   ],
+   [
+    -45,
+    20.470243955849337
+   ],
+   [
+    -30,
+    15.694034402032576
+   ],
+   [
+    -15,
+    10.947918439422903
+   ],
+   [
+    0,
+    8.57756049307856
+   ],
+   [
+    15,
+    10.947918439425626
+   ],
+   [
+    30,
+    15.694034402035872
+   ],
+   [
+    45,
+    20.470243955852244
+   ],
+   [
+    60,
+    24.32609831871747
+   ],
+   [
+    75,
+    26.799344340260173
+   ],
+   [
+    90,
+    27.649362220703562
+   ]
+  ],
+  "belt": {
+   "force_N": 100.0,
+   "pulley_offset_mm": 15.0,
+   "outer_reaction_N": 159.375,
+   "inner_reaction_N": -59.375,
+   "sweep": [
+    {
+     "belt_dir_deg": 0,
+     "outer_seat_um": 83.36305982952253,
+     "inner_seat_um": 78.64237742078397,
+     "misalignment_arcmin": 4.387718692812439
+    },
+    {
+     "belt_dir_deg": 15,
+     "outer_seat_um": 81.52339613131142,
+     "inner_seat_um": 75.9634585269224,
+     "misalignment_arcmin": 4.464877092009456
+    },
+    {
+     "belt_dir_deg": 30,
+     "outer_seat_um": 76.27146105254975,
+     "inner_seat_um": 68.10943990130008,
+     "misalignment_arcmin": 4.669181999174807
+    },
+    {
+     "belt_dir_deg": 45,
+     "outer_seat_um": 68.44904526753632,
+     "inner_seat_um": 55.61625734389589,
+     "misalignment_arcmin": 4.934617082973341
+    },
+    {
+     "belt_dir_deg": 60,
+     "outer_seat_um": 59.60878982987836,
+     "inner_seat_um": 39.33751845522687,
+     "misalignment_arcmin": 5.18648541593666
+    },
+    {
+     "belt_dir_deg": 75,
+     "outer_seat_um": 52.196546622234344,
+     "inner_seat_um": 20.393359961284773,
+     "misalignment_arcmin": 5.363372452513704
+    },
+    {
+     "belt_dir_deg": 90,
+     "outer_seat_um": 49.20512017996247,
+     "inner_seat_um": 1.3086769983648399,
+     "misalignment_arcmin": 5.426676347808753
+    },
+    {
+     "belt_dir_deg": 105,
+     "outer_seat_um": 52.196546622189445,
+     "inner_seat_um": 20.39335996121349,
+     "misalignment_arcmin": 5.363372452512678
+    },
+    {
+     "belt_dir_deg": 120,
+     "outer_seat_um": 59.6087898298103,
+     "inner_seat_um": 39.337518455162815,
+     "misalignment_arcmin": 5.186485415934828
+    },
+    {
+     "belt_dir_deg": 135,
+     "outer_seat_um": 68.44904526746785,
+     "inner_seat_um": 55.61625734384358,
+     "misalignment_arcmin": 4.934617082971113
+    },
+    {
+     "belt_dir_deg": 150,
+     "outer_seat_um": 76.27146105249655,
+     "inner_seat_um": 68.10943990126307,
+     "misalignment_arcmin": 4.669181999172763
+    },
+    {
+     "belt_dir_deg": 165,
+     "outer_seat_um": 81.52339613128264,
+     "inner_seat_um": 75.96345852690321,
+     "misalignment_arcmin": 4.464877092008224
+    },
+    {
+     "belt_dir_deg": 180,
+     "outer_seat_um": 83.36305982952253,
+     "inner_seat_um": 78.64237742078397,
+     "misalignment_arcmin": 4.387718692812439
+    },
+    {
+     "belt_dir_deg": 195,
+     "outer_seat_um": 81.52339613131142,
+     "inner_seat_um": 75.9634585269224,
+     "misalignment_arcmin": 4.464877092009456
+    },
+    {
+     "belt_dir_deg": 210,
+     "outer_seat_um": 76.27146105254972,
+     "inner_seat_um": 68.10943990130006,
+     "misalignment_arcmin": 4.669181999174806
+    },
+    {
+     "belt_dir_deg": 225,
+     "outer_seat_um": 68.44904526753633,
+     "inner_seat_um": 55.6162573438959,
+     "misalignment_arcmin": 4.934617082973341
+    },
+    {
+     "belt_dir_deg": 240,
+     "outer_seat_um": 59.60878982987838,
+     "inner_seat_um": 39.337518455226906,
+     "misalignment_arcmin": 5.18648541593666
+    },
+    {
+     "belt_dir_deg": 255,
+     "outer_seat_um": 52.196546622234344,
+     "inner_seat_um": 20.393359961284773,
+     "misalignment_arcmin": 5.363372452513705
+    },
+    {
+     "belt_dir_deg": 270,
+     "outer_seat_um": 49.20512017996247,
+     "inner_seat_um": 1.3086769983648399,
+     "misalignment_arcmin": 5.426676347808753
+    },
+    {
+     "belt_dir_deg": 285,
+     "outer_seat_um": 52.196546622189416,
+     "inner_seat_um": 20.39335996121345,
+     "misalignment_arcmin": 5.363372452512678
+    },
+    {
+     "belt_dir_deg": 300,
+     "outer_seat_um": 59.608789829810306,
+     "inner_seat_um": 39.33751845516284,
+     "misalignment_arcmin": 5.186485415934827
+    },
+    {
+     "belt_dir_deg": 315,
+     "outer_seat_um": 68.44904526746785,
+     "inner_seat_um": 55.61625734384357,
+     "misalignment_arcmin": 4.934617082971115
+    },
+    {
+     "belt_dir_deg": 330,
+     "outer_seat_um": 76.2714610524965,
+     "inner_seat_um": 68.10943990126306,
+     "misalignment_arcmin": 4.669181999172765
+    },
+    {
+     "belt_dir_deg": 345,
+     "outer_seat_um": 81.52339613128268,
+     "inner_seat_um": 75.96345852690321,
+     "misalignment_arcmin": 4.464877092008224
+    }
+   ],
+   "worst": {
+    "belt_dir_deg": 90,
+    "outer_seat_um": 49.20512017996247,
+    "inner_seat_um": 1.3086769983648399,
+    "misalignment_arcmin": 5.426676347808753
+   }
+  },
+  "vm_envelope_max_MPa": 0.6212237902755292,
+  "vm_envelope_p99_MPa": 0.46449810167616595,
+  "vm_belt_max_MPa": 1.8201631242541205,
+  "vm_belt_p99_MPa": 1.086458654210238,
+  "seconds": 132.86988830566406
+ },
+ "v3_belt_target@1.25": {
+  "h_mm": 1.25,
+  "dofs": 1161963,
+  "solid_elements": 65782,
+  "volume_cm3": 128.48046875,
+  "envelope_eig_Nmm": [
+   0.5071821057565897,
+   1.752387874915364,
+   2.199073620332504
+  ],
+  "worst_case_compliance_Nmm": 2.199073620332504,
+  "worst_direction": [
+   -1.0,
+   -5.993937014267495e-12,
+   2.8846013047663827e-13
+  ],
+  "seat_deflection_um": {
+   "vertical 80 N": 8.22539839291817,
+   "horizontal 80 N": 27.488420254156292,
+   "axial 30 N": 57.84241966901104,
+   "worst-case envelope": 27.488420254156313
+  },
+  "tilt_sweep": [
+   [
+    -90,
+    27.488420254156292
+   ],
+   [
+    -75,
+    26.636984246842395
+   ],
+   [
+    -60,
+    24.158315974671574
+   ],
+   [
+    -45,
+    20.28879526722325
+   ],
+   [
+    -30,
+    15.480510200204227
+   ],
+   [
+    -15,
+    10.664965870758113
+   ],
+   [
+    0,
+    8.22539839291817
+   ],
+   [
+    15,
+    10.664965870775228
+   ],
+   [
+    30,
+    15.480510200224645
+   ],
+   [
+    45,
+    20.288795267241237
+   ],
+   [
+    60,
+    24.15831597468466
+   ],
+   [
+    75,
+    26.636984246849273
+   ],
+   [
+    90,
+    27.488420254156292
+   ]
+  ],
+  "belt": {
+   "force_N": 100.0,
+   "pulley_offset_mm": 15.0,
+   "outer_reaction_N": 159.375,
+   "inner_reaction_N": -59.375,
+   "sweep": [
+    {
+     "belt_dir_deg": 0,
+     "outer_seat_um": 74.79990569597513,
+     "inner_seat_um": 69.84819168144217,
+     "misalignment_arcmin": 4.0873574321513795
+    },
+    {
+     "belt_dir_deg": 15,
+     "outer_seat_um": 73.39628010525193,
+     "inner_seat_um": 67.47091778269535,
+     "misalignment_arcmin": 4.206893754035177
+    },
+    {
+     "belt_dir_deg": 30,
+     "outer_seat_um": 69.41696257505313,
+     "inner_seat_um": 60.50173594592128,
+     "misalignment_arcmin": 4.517375990926932
+    },
+    {
+     "belt_dir_deg": 45,
+     "outer_seat_um": 63.579898506959786,
+     "inner_seat_um": 49.41811635186679,
+     "misalignment_arcmin": 4.909875854705498
+    },
+    {
+     "belt_dir_deg": 60,
+     "outer_seat_um": 57.149735740075045,
+     "inner_seat_um": 34.98343029294252,
+     "misalignment_arcmin": 5.273241505357843
+    },
+    {
+     "belt_dir_deg": 75,
+     "outer_seat_um": 51.940283547623885,
+     "inner_seat_um": 18.22020035801169,
+     "misalignment_arcmin": 5.524111399987204
+    },
+    {
+     "belt_dir_deg": 90,
+     "outer_seat_um": 49.89770632158303,
+     "inner_seat_um": 2.351715618407036,
+     "misalignment_arcmin": 5.6131337984243945
+    },
+    {
+     "belt_dir_deg": 105,
+     "outer_seat_um": 51.940283547484896,
+     "inner_seat_um": 18.22020035779304,
+     "misalignment_arcmin": 5.524111399984367
+    },
+    {
+     "belt_dir_deg": 120,
+     "outer_seat_um": 57.14973573985618,
+     "inner_seat_um": 34.983430292745254,
+     "misalignment_arcmin": 5.273241505352689
+    },
+    {
+     "belt_dir_deg": 135,
+     "outer_seat_um": 63.57989850673268,
+     "inner_seat_um": 49.41811635170552,
+     "misalignment_arcmin": 4.909875854699115
+    },
+    {
+     "belt_dir_deg": 150,
+     "outer_seat_um": 69.41696257487298,
+     "inner_seat_um": 60.50173594580725,
+     "misalignment_arcmin": 4.517375990920921
+    },
+    {
+     "belt_dir_deg": 165,
+     "outer_seat_um": 73.39628010515358,
+     "inner_seat_um": 67.47091778263625,
+     "misalignment_arcmin": 4.206893754031453
+    },
+    {
+     "belt_dir_deg": 180,
+     "outer_seat_um": 74.79990569597513,
+     "inner_seat_um": 69.84819168144217,
+     "misalignment_arcmin": 4.0873574321513795
+    },
+    {
+     "belt_dir_deg": 195,
+     "outer_seat_um": 73.39628010525193,
+     "inner_seat_um": 67.47091778269537,
+     "misalignment_arcmin": 4.206893754035177
+    },
+    {
+     "belt_dir_deg": 210,
+     "outer_seat_um": 69.41696257505312,
+     "inner_seat_um": 60.501735945921276,
+     "misalignment_arcmin": 4.517375990926932
+    },
+    {
+     "belt_dir_deg": 225,
+     "outer_seat_um": 63.579898506959786,
+     "inner_seat_um": 49.41811635186679,
+     "misalignment_arcmin": 4.909875854705498
+    },
+    {
+     "belt_dir_deg": 240,
+     "outer_seat_um": 57.149735740075066,
+     "inner_seat_um": 34.98343029294256,
+     "misalignment_arcmin": 5.273241505357844
+    },
+    {
+     "belt_dir_deg": 255,
+     "outer_seat_um": 51.940283547623885,
+     "inner_seat_um": 18.22020035801168,
+     "misalignment_arcmin": 5.524111399987204
+    },
+    {
+     "belt_dir_deg": 270,
+     "outer_seat_um": 49.89770632158303,
+     "inner_seat_um": 2.351715618407036,
+     "misalignment_arcmin": 5.6131337984243945
+    },
+    {
+     "belt_dir_deg": 285,
+     "outer_seat_um": 51.94028354748489,
+     "inner_seat_um": 18.220200357793004,
+     "misalignment_arcmin": 5.524111399984367
+    },
+    {
+     "belt_dir_deg": 300,
+     "outer_seat_um": 57.14973573985621,
+     "inner_seat_um": 34.983430292745275,
+     "misalignment_arcmin": 5.27324150535269
+    },
+    {
+     "belt_dir_deg": 315,
+     "outer_seat_um": 63.57989850673268,
+     "inner_seat_um": 49.41811635170552,
+     "misalignment_arcmin": 4.9098758546991155
+    },
+    {
+     "belt_dir_deg": 330,
+     "outer_seat_um": 69.41696257487295,
+     "inner_seat_um": 60.501735945807226,
+     "misalignment_arcmin": 4.517375990920922
+    },
+    {
+     "belt_dir_deg": 345,
+     "outer_seat_um": 73.39628010515358,
+     "inner_seat_um": 67.47091778263625,
+     "misalignment_arcmin": 4.206893754031453
+    }
+   ],
+   "worst": {
+    "belt_dir_deg": 90,
+    "outer_seat_um": 49.89770632158303,
+    "inner_seat_um": 2.351715618407036,
+    "misalignment_arcmin": 5.6131337984243945
+   }
+  },
+  "vm_envelope_max_MPa": 0.8184085890507747,
+  "vm_envelope_p99_MPa": 0.45194596628803174,
+  "vm_belt_max_MPa": 2.396597985795975,
+  "vm_belt_p99_MPa": 1.1394944016663138,
+  "seconds": 1157.3700094223022
+ }
+}

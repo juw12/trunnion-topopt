@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trunnion upright - optimisation results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #15181C; --text: #2A2F35; --muted: #5B6570; --line: #D7DBDF;
+    --canvas: #F3F4F5; --surface: #FFFFFF; --accent: #B3460E; --pass: #2E6B39; --fail: #A3261B; --baseline: #6E7C8A;
+    --r: 4px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--canvas); color: var(--text); font: 400 14px/1.45 "IBM Plex Sans", system-ui, sans-serif; }
+  h1, h2, h3 { font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif; color: var(--ink); line-height: 1.15; margin: 0; }
+  .num, .mono, td.num { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  a { color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  header.bar { display: flex; align-items: center; gap: 16px; padding: 12px 24px; background: var(--surface); border-bottom: 1px solid var(--line); }
+  header.bar h1 { font-size: 20px; font-weight: 600; }
+  header.bar .meta { color: var(--muted); font-size: 13px; }
+  header.bar .spacer { flex: 1; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: var(--r); border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 500 13px "IBM Plex Sans", sans-serif; text-decoration: none; cursor: pointer; transition: border-color 120ms; }
+  .btn:hover { border-color: var(--ink); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover { background: #943A0C; }
+  main.work { display: grid; grid-template-columns: 280px minmax(0, 1fr) 360px; gap: 16px; padding: 16px 24px; }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+  .panel > h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  .panel .body { padding: 12px 16px; }
+  .designs { list-style: none; margin: 0; padding: 8px; }
+  .designs li button { width: 100%; text-align: left; display: grid; gap: 2px; padding: 10px 12px; border: 1px solid transparent; border-radius: var(--r); background: none; cursor: pointer; font: inherit; color: var(--text); }
+  .designs li button:hover { background: var(--canvas); }
+  .designs li button[aria-pressed="true"] { border-color: var(--ink); background: var(--canvas); }
+  .designs .dl { font-weight: 600; color: var(--ink); }
+  .designs .ds { font-size: 12px; color: var(--muted); }
+  .designs .tag { justify-self: start; margin-top: 4px; font-size: 11px; line-height: 16px; font-weight: 500; padding: 1px 6px; border-radius: 2px; background: var(--accent); color: #fff; }
+  .viewer-wrap { position: relative; }
+  canvas#view { width: 100%; height: 520px; display: block; border-radius: 0 0 var(--r) var(--r); cursor: grab; touch-action: none; }
+  .viewbar { display: flex; gap: 6px; padding: 8px 12px; border-bottom: 1px solid var(--line); align-items: center; }
+  .viewbar .hint { margin-left: auto; color: var(--muted); font-size: 12px; }
+  .viewbar .btn { padding: 4px 10px; font-size: 12px; }
+  table { border-collapse: collapse; width: 100%; }
+  table.spec th, table.spec td { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; font-size: 13px; }
+  table.spec thead th { color: var(--muted); font-weight: 500; font-size: 12px; }
+  table.spec td.num { text-align: right; padding-right: 6px; }
+  table.spec td.unit { color: var(--muted); width: 56px; }
+  table.spec td.note { color: var(--muted); font-size: 12px; }
+  table.spec tbody th { font-weight: 400; }
+  ul.gates { list-style: none; margin: 0; padding: 0; }
+  ul.gates li { display: grid; grid-template-columns: 44px 1fr auto; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .gstate { font-weight: 600; font-size: 12px; }
+  li.pass .gstate { color: var(--pass); }
+  li.fail .gstate { color: var(--fail); }
+  .gvalue { font-family: "IBM Plex Mono", monospace; color: var(--muted); font-size: 12px; }
+  section.lower { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 16px; padding: 0 24px 16px; }
+  table.compare th, table.compare td { padding: 8px; border-bottom: 1px solid var(--line); font-size: 13px; text-align: left; }
+  table.compare thead th { font-size: 12px; color: var(--muted); font-weight: 500; vertical-align: bottom; }
+  table.compare .u { display: block; font-size: 11px; }
+  table.compare td.num, table.compare th.num { text-align: right; }
+  table.compare tbody tr { cursor: pointer; }
+  table.compare tbody tr:hover { background: var(--canvas); }
+  table.compare tr.selected { box-shadow: inset 3px 0 0 var(--ink); }
+  table.compare tr.recommended .dname::after { content: "Recommended"; display: table; margin: 4px 0 4px; font-weight: 500; line-height: 16px; letter-spacing: .02em; font-size: 11px; padding: 1px 6px; border-radius: 2px; background: var(--accent); color: #fff; font-family: "IBM Plex Sans", sans-serif; }
+  .dname { font-weight: 600; color: var(--ink); }
+  .dsub { display: block; font-size: 12px; color: var(--muted); }
+  .compare-wrap { overflow-x: auto; }
+  .dial svg { width: 100%; height: auto; display: block; font-family: "IBM Plex Mono", monospace; }
+  ul.legend { list-style: none; display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0 0; padding: 0; font-size: 12px; color: var(--muted); }
+  ul.legend .swatch { display: inline-block; width: 16px; height: 2px; background: var(--baseline); vertical-align: middle; margin-right: 6px; }
+  ul.legend li.rec { color: var(--ink); font-weight: 500; }
+  ul.legend li.rec .swatch { background: var(--accent); height: 3px; }
+  ul.files { list-style: none; margin: 0; padding: 0; }
+  ul.files li { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .fmeta { color: var(--muted); font-size: 12px; font-family: "IBM Plex Mono", monospace; }
+  ol.assumptions { margin: 0; padding-left: 18px; font-size: 13px; color: var(--text); }
+  ol.assumptions li { margin-bottom: 4px; }
+  .summary { padding: 12px 24px 0; font-size: 15px; max-width: 1100px; color: var(--ink); }
+  .viewer-fallback { padding: 16px; color: var(--muted); }
+  @media (max-width: 1100px) {
+    main.work { grid-template-columns: minmax(0, 1fr); }
+    section.lower { grid-template-columns: minmax(0, 1fr); }
+    canvas#view { height: 380px; }
+    .designs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  }
+  @media (max-width: 600px) {
+    header.bar { flex-wrap: wrap; padding: 12px 16px; }
+    main.work, section.lower { padding-left: 12px; padding-right: 12px; }
+    .summary { padding: 12px 16px 0; }
+    table.compare { font-size: 12px; }
+    .compare-wrap { overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div>
+    <h1>Trunnion upright, A-axis</h1>
+    <div class="meta">5-axis FDM printer &middot; topology optimisation &middot; <span id="recname"></span> recommended</div>
+  </div>
+  <div class="spacer"></div>
+  <a class="btn" id="dl-step" href="#">Download STEP</a>
+  <a class="btn primary" id="dl-stl" href="#">Download STL to print</a>
+</header>
+<p class="summary" id="summary"></p>
+<main class="work">
+  <aside class="panel" aria-label="Designs">
+    <h2>Designs</h2>
+    <ul class="designs" id="designs"></ul>
+  </aside>
+  <section class="panel viewer-wrap" aria-label="3D view">
+    <div class="viewbar">
+      <button class="btn" data-view="iso">Iso</button>
+      <button class="btn" data-view="front">Front</button>
+      <button class="btn" data-view="side">Side</button>
+      <button class="btn" data-view="top">Top</button>
+      <span class="hint">Drag to rotate, wheel to zoom, arrow keys when focused</span>
+    </div>
+    <canvas id="view" aria-label="Rotatable 3D view of the selected design"></canvas>
+  </section>
+  <aside class="panel" aria-label="Inspector">
+    <h2 id="inspector-title">Inspector</h2>
+    <div class="body" id="spec"></div>
+    <h2>Checks</h2>
+    <div class="body" id="gates"></div>
+  </aside>
+</main>
+<section class="lower">
+  <div class="panel">
+    <h2>All designs compared</h2>
+    <div class="body compare-wrap" id="compare"></div>
+  </div>
+  <div class="panel">
+    <h2>Deflection across the tilt range</h2>
+    <div class="body dial" id="dial"></div>
+  </div>
+  <div class="panel">
+    <h2>Files</h2>
+    <div class="body" id="files"></div>
+  </div>
+  <div class="panel">
+    <h2>Assumptions</h2>
+    <div class="body" id="assumptions"></div>
+  </div>
+</section>
+<script src="assets/data.js"></script>
+<script src="assets/viewer.js"></script>
+<script src="assets/common.js"></script>
+<script>
+  const D = window.TRUNNION, UI = window.TrunnionUI;
+  const viewer = createViewer(document.getElementById("view"), { color: "#B3460E", background: "#FFFFFF" });
+  document.getElementById("summary").textContent = D.summary;
+  document.getElementById("recname").textContent = D.designs[D.recommended].label;
+  document.getElementById("dl-stl").href = D.primaryFiles.stl;
+  document.getElementById("dl-step").href = D.primaryFiles.step;
+  const list = document.getElementById("designs");
+  function select(key) {
+    for (const b of list.querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.key === key));
+    viewer.setColor(key === D.recommended ? "#B3460E" : "#6E7C8A");
+    viewer.show(key);
+    document.getElementById("inspector-title").textContent = D.designs[key].label;
+    UI.renderSpecTable(document.getElementById("spec"), key);
+    UI.renderGates(document.getElementById("gates"), key);
+    UI.renderCompareTable(document.getElementById("compare"), select, key);
+  }
+  for (const key of D.order) {
+    const d = D.designs[key];
+    const b = document.createElement("button");
+    b.dataset.key = key;
+    b.innerHTML = `<span class="dl"></span><span class="ds"></span>`;
+    b.querySelector(".dl").textContent = d.label;
+    b.querySelector(".ds").textContent = d.short;
+    if (key === D.recommended) {
+      const t = document.createElement("span");
+      t.className = "tag";
+      t.textContent = "Recommended";
+      b.append(t);
+    }
+    b.addEventListener("click", () => select(key));
+    const li = document.createElement("li");
+    li.append(b);
+    list.append(li);
+  }
+  for (const b of document.querySelectorAll("[data-view]")) b.addEventListener("click", () => viewer.view(b.dataset.view));
+  UI.renderTiltDial(document.getElementById("dial"), { size: 420 });
+  UI.renderFiles(document.getElementById("files"));
+  UI.renderAssumptions(document.getElementById("assumptions"));
+  select(D.recommended);
+</script>
+</body>
+</html>

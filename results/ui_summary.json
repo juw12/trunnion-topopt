@@ -1,0 +1,307 @@
+{
+ "recommended": "v4_tilt_gate",
+ "headline": "Print v4: 179 g, 4.6 arcmin axle tilt, no supports",
+ "summary": "v4 Tilt gate is the lightest design that passes every check. Against a standard single-load topology optimisation it cuts worst-case compliance from 6.8 to 2.0 N\u00b7mm and axle tilt under belt pull from 28 to 4.6 arcmin, and it prints without supports.",
+ "designs": {
+  "R0_conventional": {
+   "label": "R0 Conventional",
+   "short": "5 mm web with edge flanges, hand-style",
+   "fe": "1.25 mm elements",
+   "volume_cm3": 99.71875,
+   "mass_g": 124.6484375,
+   "worst_compliance": 6.280766003303922,
+   "defl_vertical": 13.745226920833208,
+   "defl_horizontal": 66.40125069324107,
+   "defl_axial": 209.35886677679744,
+   "defl_worst": 209.35886677679738,
+   "belt_arcmin": 70.22947840910327,
+   "belt_outer_um": 409.8643980855125,
+   "vm_max": 11.835374143349004,
+   "overhang_pct": 3.6231884057971016,
+   "bodies": 17,
+   "gates": [
+    {
+     "label": "One printable body",
+     "pass": false,
+     "value": "17 bodies"
+    },
+    {
+     "label": "Self-supporting at 45\u00b0, unsupported \u2264 2 %",
+     "pass": false,
+     "value": "3.6 %"
+    },
+    {
+     "label": "Axle tilt under 100 N belt \u2264 5 arcmin",
+     "pass": false,
+     "value": "70.2\u2032"
+    },
+    {
+     "label": "Worst-case seat deflection \u2264 100 \u00b5m",
+     "pass": false,
+     "value": "209 \u00b5m"
+    },
+    {
+     "label": "Peak stress \u2264 10 MPa",
+     "pass": false,
+     "value": "11.8 MPa"
+    },
+    {
+     "label": "Seats, bolt holes and key access open",
+     "pass": true,
+     "value": "probed"
+    }
+   ],
+   "all_pass": false
+  },
+  "v0_naive": {
+   "label": "v0 Single-load TO",
+   "short": "one vertical load, no overhang control",
+   "fe": "1.25 mm elements",
+   "volume_cm3": 103.484375,
+   "mass_g": 129.35546875,
+   "worst_compliance": 6.829467984545227,
+   "defl_vertical": 5.538661639194186,
+   "defl_horizontal": 50.48648583297703,
+   "defl_axial": 227.64893281817427,
+   "defl_worst": 227.64893281817436,
+   "belt_arcmin": 28.298228081679923,
+   "belt_outer_um": 194.814041292689,
+   "vm_max": 6.3591385114694425,
+   "overhang_pct": 3.0,
+   "bodies": 1,
+   "gates": [
+    {
+     "label": "One printable body",
+     "pass": true,
+     "value": "1 body"
+    },
+    {
+     "label": "Self-supporting at 45\u00b0, unsupported \u2264 2 %",
+     "pass": false,
+     "value": "3.0 %"
+    },
+    {
+     "label": "Axle tilt under 100 N belt \u2264 5 arcmin",
+     "pass": false,
+     "value": "28.3\u2032"
+    },
+    {
+     "label": "Worst-case seat deflection \u2264 100 \u00b5m",
+     "pass": false,
+     "value": "228 \u00b5m"
+    },
+    {
+     "label": "Peak stress \u2264 10 MPa",
+     "pass": true,
+     "value": "6.4 MPa"
+    },
+    {
+     "label": "Seats, bolt holes and key access open",
+     "pass": true,
+     "value": "probed"
+    }
+   ],
+   "all_pass": false
+  },
+  "v1_robust_am": {
+   "label": "v1 Tilt-robust",
+   "short": "any tilt direction and axial, self-supporting",
+   "fe": "1.25 mm elements",
+   "volume_cm3": 103.2109375,
+   "mass_g": 129.013671875,
+   "worst_compliance": 2.5936997053895015,
+   "defl_vertical": 7.700287921540096,
+   "defl_horizontal": 31.901465851919692,
+   "defl_axial": 86.45665684631665,
+   "defl_worst": 86.45665684631673,
+   "belt_arcmin": 12.290678493780149,
+   "belt_outer_um": 97.0802475203605,
+   "vm_max": 3.503869612017173,
+   "overhang_pct": 0.0,
+   "bodies": 1,
+   "gates": [
+    {
+     "label": "One printable body",
+     "pass": true,
+     "value": "1 body"
+    },
+    {
+     "label": "Self-supporting at 45\u00b0, unsupported \u2264 2 %",
+     "pass": true,
+     "value": "0.0 %"
+    },
+    {
+     "label": "Axle tilt under 100 N belt \u2264 5 arcmin",
+     "pass": false,
+     "value": "12.3\u2032"
+    },
+    {
+     "label": "Worst-case seat deflection \u2264 100 \u00b5m",
+     "pass": true,
+     "value": "86 \u00b5m"
+    },
+    {
+     "label": "Peak stress \u2264 10 MPa",
+     "pass": true,
+     "value": "3.5 MPa"
+    },
+    {
+     "label": "Seats, bolt holes and key access open",
+     "pass": true,
+     "value": "probed"
+    }
+   ],
+   "all_pass": false
+  },
+  "v2_tilt_belt_robust": {
+   "label": "v2 Tilt and belt",
+   "short": "adds the overhung belt case to the tilt envelope",
+   "fe": "1.25 mm elements",
+   "volume_cm3": 103.15234375,
+   "mass_g": 128.9404296875,
+   "worst_compliance": 2.7021265601066062,
+   "defl_vertical": 8.263459527293913,
+   "defl_horizontal": 33.77658200133254,
+   "defl_axial": 69.015941356369,
+   "defl_worst": 33.77658200133256,
+   "belt_arcmin": 8.883883460018751,
+   "belt_outer_um": 76.46300824910341,
+   "vm_max": 3.3143123234182195,
+   "overhang_pct": 0.0,
+   "bodies": 1,
+   "gates": [
+    {
+     "label": "One printable body",
+     "pass": true,
+     "value": "1 body"
+    },
+    {
+     "label": "Self-supporting at 45\u00b0, unsupported \u2264 2 %",
+     "pass": true,
+     "value": "0.0 %"
+    },
+    {
+     "label": "Axle tilt under 100 N belt \u2264 5 arcmin",
+     "pass": false,
+     "value": "8.9\u2032"
+    },
+    {
+     "label": "Worst-case seat deflection \u2264 100 \u00b5m",
+     "pass": true,
+     "value": "34 \u00b5m"
+    },
+    {
+     "label": "Peak stress \u2264 10 MPa",
+     "pass": true,
+     "value": "3.3 MPa"
+    },
+    {
+     "label": "Seats, bolt holes and key access open",
+     "pass": true,
+     "value": "probed"
+    }
+   ],
+   "all_pass": false
+  },
+  "v3_belt_target": {
+   "label": "v3 Belt-weighted",
+   "short": "belt case weighted 1.7x, 130 cm\u00b3 budget",
+   "fe": "1.25 mm elements",
+   "volume_cm3": 128.48046875,
+   "mass_g": 160.6005859375,
+   "worst_compliance": 2.199073620332504,
+   "defl_vertical": 8.22539839291817,
+   "defl_horizontal": 27.488420254156292,
+   "defl_axial": 57.84241966901104,
+   "defl_worst": 27.488420254156313,
+   "belt_arcmin": 5.6131337984243945,
+   "belt_outer_um": 49.89770632158303,
+   "vm_max": 2.396597985795975,
+   "overhang_pct": 0.0,
+   "bodies": 1,
+   "gates": [
+    {
+     "label": "One printable body",
+     "pass": true,
+     "value": "1 body"
+    },
+    {
+     "label": "Self-supporting at 45\u00b0, unsupported \u2264 2 %",
+     "pass": true,
+     "value": "0.0 %"
+    },
+    {
+     "label": "Axle tilt under 100 N belt \u2264 5 arcmin",
+     "pass": false,
+     "value": "5.6\u2032"
+    },
+    {
+     "label": "Worst-case seat deflection \u2264 100 \u00b5m",
+     "pass": true,
+     "value": "27 \u00b5m"
+    },
+    {
+     "label": "Peak stress \u2264 10 MPa",
+     "pass": true,
+     "value": "2.4 MPa"
+    },
+    {
+     "label": "Seats, bolt holes and key access open",
+     "pass": true,
+     "value": "probed"
+    }
+   ],
+   "all_pass": false
+  },
+  "v4_tilt_gate": {
+   "label": "v4 Tilt gate",
+   "short": "belt case weighted 2.2x, 145 cm\u00b3 budget",
+   "fe": "1.25 mm elements",
+   "volume_cm3": 143.515625,
+   "mass_g": 179.39453125,
+   "worst_compliance": 1.96407248100074,
+   "defl_vertical": 8.22314217836323,
+   "defl_horizontal": 24.550906012509262,
+   "defl_axial": 52.94265075994594,
+   "defl_worst": 24.550906012509227,
+   "belt_arcmin": 4.557392307041101,
+   "belt_outer_um": 41.58660788527288,
+   "vm_max": 2.0419669267908303,
+   "overhang_pct": 0.0,
+   "bodies": 1,
+   "gates": [
+    {
+     "label": "One printable body",
+     "pass": true,
+     "value": "1 body"
+    },
+    {
+     "label": "Self-supporting at 45\u00b0, unsupported \u2264 2 %",
+     "pass": true,
+     "value": "0.0 %"
+    },
+    {
+     "label": "Axle tilt under 100 N belt \u2264 5 arcmin",
+     "pass": true,
+     "value": "4.6\u2032"
+    },
+    {
+     "label": "Worst-case seat deflection \u2264 100 \u00b5m",
+     "pass": true,
+     "value": "25 \u00b5m"
+    },
+    {
+     "label": "Peak stress \u2264 10 MPa",
+     "pass": true,
+     "value": "2.0 MPa"
+    },
+    {
+     "label": "Seats, bolt holes and key access open",
+     "pass": true,
+     "value": "probed"
+    }
+   ],
+   "all_pass": true
+  }
+ }
+}

@@ -1,0 +1,27 @@
+{
+ "checks": {
+  "triangles": 370052,
+  "vertices": 185002,
+  "edges_not_shared_by_2": 0,
+  "directed_edge_duplicates": 0,
+  "watertight": true,
+  "consistently_oriented": true,
+  "volume_cm3": 142.203464458231,
+  "area_cm2": 430.17194880976405,
+  "bbox_mm": [
+   120.00000000200001,
+   40.00000000199999,
+   142.50827446150342
+  ]
+ },
+ "probes": {
+  "seat front (void)": true,
+  "seat back (void)": true,
+  "bore (void)": true,
+  "shoulder lip (solid)": true,
+  "boss (solid)": true,
+  "bolt hole (void)": true,
+  "pad (solid)": true,
+  "key access (void)": true
+ }
+}
