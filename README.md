@@ -21,9 +21,14 @@ pass/fail checks, files).
 | Unsupported overhang at 45° | 3.0 % | 0.0 % | **0.0 %** |
 
 All numbers come from linear FE on the exported geometry at 1.25 mm elements (about 1.16 M DOF),
-not from the optimiser. Coarse (2.5 mm) and fine meshes agree within about 3 %.
+not from the optimiser. For v2 and v4 the stiffness results (compliance, seat deflection, belt tilt)
+differ by at most 3.4 % between the coarse (2.5 mm) and fine meshes. Peak stress is not mesh-converged:
+it is 31 to 35 % higher on the fine mesh (v4: 1.6 MPa coarse, 2.0 MPa fine), so read it as a lower bound.
+The v0 baseline compliance also depends on the mesh (11.0 N·mm coarse, 6.8 N·mm fine).
 
-- `models/trunnion_upright_v4_final.stl`: print file, watertight, one body.
+- `models/trunnion_upright_v4_final.stl`: print file, one body. The surface is closed (watertight) at full
+  precision. In the single precision an STL stores, about a fifth of its triangles are zero-area slivers and
+  83 edges are left open after welding, which a slicer repairs on import.
 - `models/trunnion_upright_v4_final_step.zip`: STEP, valid single solid, exact bearing seats,
   bore, M5 holes and hex-key access rebuilt in CadQuery (`src/trunnion_cad.py`).
 - `models/trunnion_upright_v2_final.stl`: lighter option (meets 5′ if belt pull stays below 56 N).
@@ -56,6 +61,18 @@ stiffness with a test print.
 
 Python 3.11+ with `numpy`, `scipy`; `cadquery` for the STEP rebuild. The scripts in `src/` expect to run
 from a working folder containing `runs/` (density fields, see `results/designs/`) and write to `out/`.
+
+## Tests
+
+`python -m unittest discover -s tests` runs 56 tests in about 45 s (needs `numpy` and `scipy`). They also run on
+every push.
+
+- Recomputed from the saved designs in `results/designs/`: the overhang and connectivity audit, the printable
+  surface and its interface probes, and that the shipped v4 STL is that surface, triangle for triangle.
+- Unit checks against closed-form answers: element stiffness, a bar in tension, the multigrid solver against a
+  direct solve, the overhang filter and the mesh export.
+- Cross-checked, not re-solved: the 1.16 M DOF results in `results/verification_*.json` against the table above
+  and the results page data.
 
 ## Licence
 
