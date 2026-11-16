@@ -18,7 +18,14 @@ from scipy.ndimage import map_coordinates
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from post5ax import build_field, marching_tetrahedra, mesh_checks, overhang_audit  # noqa: E402
+from post5ax import (  # noqa: E402
+    MIN_EDGE_FRACTION,
+    build_field,
+    marching_tetrahedra,
+    mesh_checks,
+    overhang_audit,
+    stl_checks,
+)
 from topo5ax import Mesh, Params, build_regions  # noqa: E402
 
 RESULTS = ROOT / "results"
@@ -205,42 +212,77 @@ class PrintableSurfaceTest(unittest.TestCase):
 
 
 class ShippedStlTest(unittest.TestCase):
-    """What a slicer reads: the file's own single-precision coordinates, welded by position."""
+    """What a slicer reads: each file's own single-precision coordinates, welded by position."""
+
+    PRINT_FILES = {
+        "v0_naive.npz": "trunnion_upright_v0_naive_baseline.stl",
+        "v2_tilt_belt_robust.npz": "trunnion_upright_v2_final.stl",
+        "v4_tilt_gate.npz": "trunnion_upright_v4_final.stl",
+    }
 
     @classmethod
     def setUpClass(cls):
-        data = (ROOT / "models" / "trunnion_upright_v4_final.stl").read_bytes()
+        cls.as_read = {
+            name: stl_checks(ROOT / "models" / name) for name in cls.PRINT_FILES.values()
+        }
+        cls.report = load_json("mesh_v4.json")
+
+    def test_every_print_file_is_closed_in_single_precision(self):
+        for name, checks in self.as_read.items():
+            with self.subTest(name):
+                self.assertEqual(checks["collapsed_triangles"], 0)
+                self.assertEqual(checks["zero_area_triangles"], 0)
+                self.assertEqual(checks["edges_not_shared_by_2"], 0)
+                self.assertEqual(checks["directed_edge_duplicates"], 0)
+                self.assertTrue(checks["watertight"])
+                self.assertTrue(checks["consistently_oriented"])
+                self.assertEqual(checks["triangles"], checks["triangles_in_file"])
+                self.assertGreater(checks["smallest_triangle_mm2"], 0.0)
+                self.assertGreater(checks["volume_cm3"], 0.0)       # normals point outward
+
+    def test_v4_volume_area_and_size_match_the_mesh_report(self):
+        welded = self.as_read["trunnion_upright_v4_final.stl"]
+        reported = self.report["checks"]
+        self.assertAlmostEqual(
+            welded["volume_cm3"], reported["volume_cm3"], delta=1e-6 * reported["volume_cm3"]
+        )
+        self.assertAlmostEqual(
+            welded["area_cm2"], reported["area_cm2"], delta=1e-6 * reported["area_cm2"]
+        )
+        self.assertEqual(welded["triangles"], reported["triangles"])
+        self.assertEqual(welded["vertices"], reported["vertices"])
+        for from_file, in_report in zip(welded["bbox_mm"], reported["bbox_mm"]):
+            self.assertAlmostEqual(from_file, in_report, delta=1e-4)
+
+    def test_mesh_report_records_what_the_v4_file_reads_as(self):
+        welded = self.as_read["trunnion_upright_v4_final.stl"]
+        recorded = self.report["as_read_from_the_stl_file"]
+        self.assertEqual(self.report["min_edge_fraction"], MIN_EDGE_FRACTION)
+        self.assertEqual(set(recorded), set(welded))
+        for key, value in welded.items():
+            if isinstance(value, (bool, int)):
+                self.assertEqual(recorded[key], value, key)
+            elif isinstance(value, float):
+                self.assertAlmostEqual(recorded[key], value, delta=1e-9 * max(1.0, abs(value)), msg=key)
+            else:
+                for from_file, in_report in zip(value, recorded[key]):
+                    self.assertAlmostEqual(from_file, in_report, delta=1e-9, msg=key)
+
+    def test_lighter_and_baseline_files_are_their_saved_designs(self):
+        # the v4 file is compared with its rebuilt surface in PrintableSurfaceTest
+        params = Params()
+        grid = Mesh(params.nx, params.ny, params.nz, params.h)
         record = np.dtype([("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")])
-        corners = np.frombuffer(data[84:], dtype=record)["v"].reshape(-1, 3)
-        vertices, index = np.unique(corners, axis=0, return_inverse=True)
-        faces = index.reshape(-1, 3)
-        cls.collapsed = (
-            (faces[:, 0] == faces[:, 1]) | (faces[:, 1] == faces[:, 2]) | (faces[:, 0] == faces[:, 2])
-        )
-        cls.checks = mesh_checks(vertices.astype(float), faces[~cls.collapsed])
-        cls.committed = load_json("mesh_v4.json")["checks"]
-
-    def test_volume_area_and_size_match_the_mesh_report(self):
-        self.assertAlmostEqual(
-            self.checks["volume_cm3"], self.committed["volume_cm3"], delta=1e-6 * self.committed["volume_cm3"]
-        )
-        self.assertAlmostEqual(
-            self.checks["area_cm2"], self.committed["area_cm2"], delta=1e-6 * self.committed["area_cm2"]
-        )
-        for welded, reported in zip(self.checks["bbox_mm"], self.committed["bbox_mm"]):
-            self.assertAlmostEqual(welded, reported, delta=1e-4)
-        self.assertGreater(self.checks["volume_cm3"], 0.0)          # normals point outward
-
-    def test_welding_leaves_only_a_few_open_edges(self):
-        # Known limit, recorded so it cannot grow unnoticed. The mesh report says "watertight"
-        # for the double-precision mesh. In the file's single precision about a fifth of the
-        # triangles are slivers that collapse to a line, and welding leaves 83 edges that are
-        # not shared by exactly two triangles. A slicer has to repair those.
-        self.assertTrue(self.committed["watertight"])
-        self.assertLess(self.collapsed.mean(), 0.25)
-        edges_checked = 3 * int((~self.collapsed).sum()) // 2
-        self.assertLessEqual(self.checks["edges_not_shared_by_2"], 83)
-        self.assertLess(self.checks["edges_not_shared_by_2"] / edges_checked, 2e-4)
+        for design, name in self.PRINT_FILES.items():
+            if design == "v4_tilt_gate.npz":
+                continue
+            with self.subTest(name):
+                field, origin, spacing = build_field(params, grid.to3d(load_density(design)), voxel=1.0)
+                vertices, faces = marching_tetrahedra(field, origin, spacing)
+                data = (ROOT / "models" / name).read_bytes()
+                self.assertEqual(len(data), 84 + 50 * len(faces))
+                shipped = np.frombuffer(data[84:], dtype=record)["v"]
+                self.assertTrue(np.array_equal(shipped, vertices[faces].astype("<f4")))
 
 
 class ReportedNumbersTest(unittest.TestCase):
@@ -361,6 +403,30 @@ class ReportedNumbersTest(unittest.TestCase):
             self.assertLess(rise, 0.36, design)
         self.assertIn("Peak stress is not mesh-converged", self.readme)
         self.assertNotIn("fine meshes agree within", self.readme)
+
+    def test_99th_percentile_stress_agrees_between_meshes_for_v2_and_v4(self):
+        # unlike the peak, which one element sets, the 99th percentile moves by less than 4 %
+        for design in ("v2", "v4"):
+            fine = self.blocks[design]["fine"]
+            coarse = self.blocks[design]["coarse"]
+            for case in ("vm_envelope_p99_MPa", "vm_belt_p99_MPa"):
+                change = abs(fine[case] - coarse[case]) / coarse[case]
+                self.assertLess(change, 0.04, f"{design} {case}")
+        v4 = self.blocks["v4"]
+        self.assertIn(
+            f"{v4['coarse']['vm_belt_p99_MPa']:.2f} MPa coarse, {v4['fine']['vm_belt_p99_MPa']:.2f} MPa fine",
+            self.readme,
+        )
+        self.assertIn("within 4 %", self.readme)
+
+    def test_readme_describes_the_v4_print_file_as_the_file_reads(self):
+        as_read = load_json("mesh_v4.json")["as_read_from_the_stl_file"]
+        self.assertEqual(as_read["collapsed_triangles"], 0)
+        self.assertEqual(as_read["edges_not_shared_by_2"], 0)
+        self.assertIn(f"{as_read['triangles_in_file']:,} triangles", self.readme)
+        self.assertIn(f"{as_read['volume_cm3']:.1f} cm³", self.readme)
+        self.assertNotIn("slivers", self.readme)
+        self.assertNotIn("repairs on import", self.readme)
 
     def test_envelope_eigenvalues_are_sorted_and_the_largest_is_the_worst_case(self):
         for design, pair in self.blocks.items():

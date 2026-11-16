@@ -24,6 +24,14 @@ v4: 2.5 mm -> 1.25 mm belt tilt 4.42 -> 4.56 arcmin (+3.2 %); overhang 0.0 %, on
 - STL export filled the bearing seats (band intersection instead of union). Fixed; interface probes now
   check seats, bore, bolt holes and key access on every export.
 - OCC STL reader failed on sliver triangles; fixed by clamping |field| >= 0.02 voxel before meshing.
+- Print files were closed only at full precision. Read back in the single precision an STL stores, 74,724 of
+  the 370,052 triangles of v4 collapsed and welding left 83 edges not shared by two triangles (v2: 65,638
+  and 75; v0: 59,654 and 26). Cause: exact features put the field at zero on grid points, so many surface
+  crossings landed on the same point. Fixed by keeping every crossing 0.001 of a grid edge from both ends
+  (a vertex moves at most 1.7 um). All three files rebuilt with `src/rebuild_print_files.py`: no collapsed
+  or zero-area triangle, every edge shared by two. v4 volume 142.2035 -> 142.2150 cm3. Not opened in a slicer.
+- Peak stress: no third mesh was solved (2.8 GB of memory free; 0.625 mm elements need about 9 M DOF). The
+  two existing meshes show the 99th-percentile stress agreeing within 4 % for v2 and v4, the peak not.
 - v3 CAD step crashed silently inside the pipeline (no output, no STEP) while the parent still held the
   1.16 M DOF FE model; a standalone rerun produced a valid single solid. Cause: memory pressure.
 

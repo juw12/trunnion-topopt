@@ -10,7 +10,14 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from post5ax import marching_tetrahedra, mesh_checks, overhang_audit, write_stl  # noqa: E402
+from post5ax import (  # noqa: E402
+    MIN_EDGE_FRACTION,
+    marching_tetrahedra,
+    mesh_checks,
+    overhang_audit,
+    stl_checks,
+    write_stl,
+)
 from topo5ax import Mesh, OverhangFilter  # noqa: E402
 
 GRID = (7, 5, 6)
@@ -185,6 +192,56 @@ class MarchingTetrahedraTest(unittest.TestCase):
         self.assertAlmostEqual(checks["area_cm2"], exact_area, delta=0.02 * exact_area)
         distance = np.linalg.norm(vertices, axis=1)
         self.assertLess(np.abs(distance - radius).max(), 0.05)
+
+
+class WallOnGridPointsTest(unittest.TestCase):
+    """A flat wall that lies exactly on grid points, as the bores and bolt holes of the part do."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.spacing = 1.0
+        axis = np.arange(-6.0, 6.0 + cls.spacing / 2, cls.spacing)
+        x, y, z = np.meshgrid(axis, axis, axis, indexing="ij")
+        # an 8 mm cube: the field is exactly zero on every grid point of its six walls
+        cls.field = 4.0 - np.maximum.reduce([np.abs(x), np.abs(y), np.abs(z)])
+        cls.origin = np.array([axis[0], axis[0], axis[0]])
+
+    def as_read_from_a_file(self, min_edge_fraction):
+        vertices, faces = marching_tetrahedra(
+            self.field, self.origin, self.spacing, min_edge_fraction=min_edge_fraction
+        )
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "cube.stl"
+            write_stl(path, vertices, faces)
+            return vertices, stl_checks(path)
+
+    def test_the_field_really_has_zeros_on_grid_points(self):
+        self.assertGreater(int((self.field == 0).sum()), 300)
+
+    def test_written_file_is_closed_in_single_precision(self):
+        _, as_read = self.as_read_from_a_file(MIN_EDGE_FRACTION)
+        self.assertEqual(as_read["collapsed_triangles"], 0)
+        self.assertEqual(as_read["zero_area_triangles"], 0)
+        self.assertEqual(as_read["edges_not_shared_by_2"], 0)
+        self.assertTrue(as_read["consistently_oriented"])
+        self.assertEqual(as_read["triangles"], as_read["triangles_in_file"])
+        self.assertGreater(as_read["smallest_triangle_mm2"], 0.0)
+        self.assertAlmostEqual(as_read["volume_cm3"], 0.512, delta=0.001)
+
+    def test_without_the_margin_the_same_file_has_collapsed_triangles(self):
+        # proves the check above can fail: this is what the print files looked like before
+        _, as_read = self.as_read_from_a_file(0.0)
+        self.assertGreater(as_read["collapsed_triangles"], 2000)
+        self.assertGreater(as_read["zero_area_triangles"], 0)
+        self.assertLess(as_read["triangles"], as_read["triangles_in_file"])
+
+    def test_the_margin_moves_no_vertex_further_than_stated(self):
+        with_margin, _ = self.as_read_from_a_file(MIN_EDGE_FRACTION)
+        without, _ = self.as_read_from_a_file(0.0)
+        self.assertEqual(with_margin.shape, without.shape)
+        moved = np.linalg.norm(with_margin - without, axis=1).max()
+        self.assertGreater(moved, 0.0)
+        self.assertLessEqual(moved, MIN_EDGE_FRACTION * np.sqrt(3.0) * self.spacing * (1 + 1e-9))
 
 
 class StlExportTest(unittest.TestCase):
