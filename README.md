@@ -24,11 +24,16 @@ All numbers come from linear FE on the exported geometry at 1.25 mm elements (ab
 not from the optimiser. For v2 and v4 the stiffness results (compliance, seat deflection, belt tilt)
 differ by at most 3.4 % between the coarse (2.5 mm) and fine meshes. Peak stress is not mesh-converged:
 it is 31 to 35 % higher on the fine mesh (v4: 1.6 MPa coarse, 2.0 MPa fine), so read it as a lower bound.
+The 99th-percentile stress, which no single element sets, does agree between the meshes for v2 and v4,
+within 4 % (v4 under belt pull: 0.93 MPa coarse, 0.95 MPa fine).
 The v0 baseline compliance also depends on the mesh (11.0 N·mm coarse, 6.8 N·mm fine).
 
-- `models/trunnion_upright_v4_final.stl`: print file, one body. The surface is closed (watertight) at full
-  precision. In the single precision an STL stores, about a fifth of its triangles are zero-area slivers and
-  83 edges are left open after welding, which a slicer repairs on import.
+- `models/trunnion_upright_v4_final.stl`: print file, one body. Read back in the single precision an STL
+  stores and welded by position, the file is closed: 370,052 triangles, none collapsed or without area,
+  every edge shared by exactly two triangles, normals outward, 142.2 cm³. The v2 and v0 files pass the same
+  check. Surface crossings are kept 0.001 of a grid edge (1 µm) away from the grid points, which is what
+  keeps the triangles from collapsing. `python src/rebuild_print_files.py` rebuilds all three files from
+  the saved designs and stops if one is not closed. Not yet opened in a slicer.
 - `models/trunnion_upright_v4_final_step.zip`: STEP, valid single solid, exact bearing seats,
   bore, M5 holes and hex-key access rebuilt in CadQuery (`src/trunnion_cad.py`).
 - `models/trunnion_upright_v2_final.stl`: lighter option (meets 5′ if belt pull stays below 56 N).
@@ -64,11 +69,12 @@ from a working folder containing `runs/` (density fields, see `results/designs/`
 
 ## Tests
 
-`python -m unittest discover -s tests` runs 56 tests in about 45 s (needs `numpy` and `scipy`). They also run on
+`python -m unittest discover -s tests` runs 64 tests in one to two and a half minutes (needs `numpy` and `scipy`). They also run on
 every push.
 
 - Recomputed from the saved designs in `results/designs/`: the overhang and connectivity audit, the printable
-  surface and its interface probes, and that the shipped v4 STL is that surface, triangle for triangle.
+  surface and its interface probes, and that each shipped STL is that surface, triangle for triangle.
+- Read from the shipped STL files as a slicer reads them: closed, no collapsed or zero-area triangle.
 - Unit checks against closed-form answers: element stiffness, a bar in tension, the multigrid solver against a
   direct solve, the overhang filter and the mesh export.
 - Cross-checked, not re-solved: the 1.16 M DOF results in `results/verification_*.json` against the table above

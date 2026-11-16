@@ -6,12 +6,12 @@
   "directed_edge_duplicates": 0,
   "watertight": true,
   "consistently_oriented": true,
-  "volume_cm3": 142.203464458231,
-  "area_cm2": 430.17194880976405,
+  "volume_cm3": 142.2150409687393,
+  "area_cm2": 430.19435374438615,
   "bbox_mm": [
-   120.00000000200001,
-   40.00000000199999,
-   142.50827446150342
+   120.00200000000001,
+   40.001999999999995,
+   142.50927446050343
   ]
  },
  "probes": {
@@ -23,5 +23,25 @@
   "bolt hole (void)": true,
   "pad (solid)": true,
   "key access (void)": true
- }
+ },
+ "as_read_from_the_stl_file": {
+  "triangles": 370052,
+  "vertices": 185002,
+  "edges_not_shared_by_2": 0,
+  "directed_edge_duplicates": 0,
+  "watertight": true,
+  "consistently_oriented": true,
+  "volume_cm3": 142.21503740801802,
+  "area_cm2": 430.194350322723,
+  "bbox_mm": [
+   120.00199945073109,
+   40.00199945073109,
+   142.50927026371937
+  ],
+  "triangles_in_file": 370052,
+  "collapsed_triangles": 0,
+  "zero_area_triangles": 0,
+  "smallest_triangle_mm2": 4.994508344680071e-07
+ },
+ "min_edge_fraction": 0.001
 }

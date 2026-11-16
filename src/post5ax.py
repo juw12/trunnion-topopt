@@ -82,7 +82,19 @@ def build_field(prm: Params, x_phys3d: np.ndarray, voxel: float = 1.0):
 # ----------------------------------------------------------------------------
 # Marching tetrahedra (Freudenthal split -> consistent, closed 2-manifold)
 # ----------------------------------------------------------------------------
-def marching_tetrahedra(field, origin, spacing, level=0.0):
+MIN_EDGE_FRACTION = 1e-3   # a crossing stays this far (as a fraction of the grid edge) from both ends
+
+
+def marching_tetrahedra(field, origin, spacing, level=0.0, min_edge_fraction=MIN_EDGE_FRACTION):
+    """Closed, outward-oriented triangle surface of field > level.
+
+    An exact feature (a bore, a bolt hole) puts the field at exactly zero on many grid points. Every
+    crossing next to such a point would land on the point itself, so several vertices would share one
+    position and their triangles would have no area: closed in double precision, but a slicer reads the
+    file in single precision, welds the coinciding corners and finds open and three-way edges. Keeping
+    each crossing at least min_edge_fraction of the edge away from both ends gives every vertex its own
+    position, at most min_edge_fraction * sqrt(3) * spacing away from where it was.
+    """
     f = field - level
     f = np.where(f == 0, 1e-9, f)
     nx, ny, nz = f.shape
@@ -139,7 +151,7 @@ def marching_tetrahedra(field, origin, spacing, level=0.0):
     p1 = np.stack(np.unravel_index(uniq[:, 1], f.shape, order="F"), axis=1).astype(float)
     f0 = flat[uniq[:, 0]]
     f1 = flat[uniq[:, 1]]
-    t = (f0 / (f0 - f1))[:, None]
+    t = np.clip(f0 / (f0 - f1), min_edge_fraction, 1.0 - min_edge_fraction)[:, None]
     verts = origin + spacing * (p0 + t * (p1 - p0))
     faces = inverse.reshape(-1, 3)
     # orient outward: normal must oppose the (inward) field gradient
@@ -184,6 +196,33 @@ def write_stl(path, verts, faces, name="trunnion_upright"):
         fh.write(name.encode()[:80].ljust(80, b" "))
         fh.write(struct.pack("<I", len(faces)))
         fh.write(data.tobytes())
+
+
+def stl_checks(path):
+    """What a slicer reads from a binary STL: single-precision corners, welded by exact position.
+
+    Returns mesh_checks() of the welded mesh plus how many triangles lost a corner to welding
+    (collapsed) or have no area. A file is closed for a slicer when both counts are zero, every edge
+    is shared by exactly two triangles and the orientation is consistent.
+    """
+    with open(path, "rb") as fh:
+        data = fh.read()
+    count = struct.unpack("<I", data[80:84])[0]
+    record = np.dtype([("n", "<f4", 3), ("v", "<f4", (3, 3)), ("a", "<u2")])
+    corners = np.frombuffer(data[84:84 + 50 * count], dtype=record)["v"].reshape(-1, 3)
+    verts, index = np.unique(corners, axis=0, return_inverse=True)
+    faces = index.reshape(-1, 3)
+    collapsed = (faces[:, 0] == faces[:, 1]) | (faces[:, 1] == faces[:, 2]) | (faces[:, 0] == faces[:, 2])
+    verts = verts.astype(float)
+    kept = faces[~collapsed]
+    v0, v1, v2 = verts[kept[:, 0]], verts[kept[:, 1]], verts[kept[:, 2]]
+    areas = 0.5 * np.linalg.norm(np.cross(v1 - v0, v2 - v0), axis=1)
+    checks = mesh_checks(verts, kept)
+    checks["triangles_in_file"] = int(count)
+    checks["collapsed_triangles"] = int(collapsed.sum())
+    checks["zero_area_triangles"] = int((areas == 0).sum())
+    checks["smallest_triangle_mm2"] = float(areas.min()) if len(areas) else 0.0
+    return checks
 
 
 # ----------------------------------------------------------------------------
